@@ -4,4 +4,4 @@ __pycache__/
 *$py.class
 *.env
 .idea/
-django-secrets.yaml
+django-secret.yaml
