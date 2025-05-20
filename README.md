@@ -85,4 +85,5 @@ $ docker compose build web
 ```sh
 kubectl apply -f django-secret.yaml
 kubectl apply -f service_django_app.yaml
+kubectl apply -f ingress.yaml
 ```
