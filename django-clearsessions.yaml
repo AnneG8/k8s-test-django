@@ -7,8 +7,10 @@ metadata:
     app: service
 spec:
   schedule: "0 2 * * *"
+  startingDeadlineSeconds: 60
   jobTemplate:
     spec:
+      ttlSecondsAfterFinished: 300
       template:
         spec:
           restartPolicy: Never
