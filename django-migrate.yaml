@@ -1,0 +1,23 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: django-migrate-job
+spec:
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: django-migrate
+          image: anneg8/django_app:latest
+          command: ["python", "manage.py", "migrate"]
+          env:
+            - name: SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: django-secret
+                  key: SECRET_KEY
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: django-secret
+                  key: DATABASE_URL
