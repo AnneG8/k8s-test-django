@@ -76,7 +76,30 @@ $ docker compose build web
 
 `DATABASE_URL` -- адрес для подключения к базе данных PostgreSQL. Другие СУБД сайт не поддерживает. [Формат записи](https://github.com/jacobian/dj-database-url#url-schema).
 
-### Как задать переменные окружения для Kubernetes кластера
+## Как запустить сайт через Minikube
+
+Установите [VirtualBox](https://www.virtualbox.org/).
+
+Установите [kubectl](https://kubernetes.io/ru/docs/tasks/tools/install-kubectl/) и поднимите кластер [Minikube](https://minikube.sigs.k8s.io/docs/drivers/virtualbox/) на VirtualBox:
+
+```
+minikube start --vm-driver=virtualbox
+```
+
+Разверните PostgreSQL в кластере с помощью [Helm](https://helm.sh/):
+
+```
+choco install kubernetes-helm
+helm repo add bitnami https://charts.bitnami.com/bitnami
+helm install postgres-db bitnami/postgresql \
+  --set auth.database=dbname \
+  --set auth.username=username \
+  --set auth.password=userpassword \
+  --set primary.persistence.enabled=true \
+  --set primary.persistence.size=10Gi
+```
+
+Задайте переменные окружения для Kubernetes кластера
 
 Обычные переменные `DEBUG` и `ALLOWED_HOSTS` можно задать через манифест `service_django_app.yaml`, а для секретных `SECRET_KEY` и `DATABASE_URL` требуется создать файл `django-secret.yaml`, по образцу `django-secret-template.yaml`.
 
