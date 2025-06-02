@@ -5,3 +5,4 @@ __pycache__/
 *.env
 .idea/
 django-secret.yaml
+kubernetes/django-secret.yaml
