@@ -31,21 +31,3 @@ spec:
       volumes:
         - name: media-volume
           emptyDir: {}
-
----
-
-apiVersion: v1
-kind: Service
-metadata:
-  name: django-app-service
-  labels:
-    env: dev
-spec:
-  type: ClusterIP
-  selector:
-    app: django
-  ports:
-    - name: app-listener
-      protocol: TCP
-      port: 80
-      targetPort: 80

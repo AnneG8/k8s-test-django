@@ -105,7 +105,8 @@ helm install postgres-db bitnami/postgresql \
 
 ```sh
 kubectl apply -f django-secret.yaml
-kubectl apply -f service_django_app.yaml
+kubectl apply -f deployment-django-app.yaml
+kubectl apply -f service-django-app.yaml
 kubectl apply -f django-migrate.yaml
 kubectl apply -f ingress.yaml
 kubectl apply -f django-clearsessions.yaml
