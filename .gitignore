@@ -4,5 +4,5 @@ __pycache__/
 *$py.class
 *.env
 .idea/
-django-secret.yaml
+kubernetes/django-secret.yaml
 kubernetes/django-secret.yaml

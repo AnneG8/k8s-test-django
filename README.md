@@ -99,11 +99,9 @@ helm install postgres-db bitnami/postgresql \
   --set primary.persistence.size=10Gi
 ```
 
-Задайте переменные окружения для Kubernetes кластера
+Создайте файл `django-secret.yaml`, по образцу `django-secret-template.yaml` и заполните в нем значения переменных `SECRET_KEY`, `DATABASE_URL`, `DEBUG` и `ALLOWED_HOSTS`.
 
-Обычные переменные `DEBUG` и `ALLOWED_HOSTS` можно задать через манифест `service_django_app.yaml`, а для секретных `SECRET_KEY` и `DATABASE_URL` требуется создать файл `django-secret.yaml`, по образцу `django-secret-template.yaml`.
-
-Задав значения переменных в манифестах, выполнить команды:
+Задав значения переменных, выполнить команды:
 
 ```sh
 kubectl apply -f django-secret.yaml

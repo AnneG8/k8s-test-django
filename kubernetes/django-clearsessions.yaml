@@ -18,14 +18,6 @@ spec:
             - name: django-clearsessions
               image: anneg8/django_app:latest
               command: [ "python", "manage.py", "clearsessions" ]
-              env:
-                - name: SECRET_KEY
-                  valueFrom:
-                    secretKeyRef:
-                      name: django-secret
-                      key: SECRET_KEY
-                - name: DATABASE_URL
-                  valueFrom:
-                    secretKeyRef:
-                      name: django-secret
-                      key: DATABASE_URL
+              envFrom:
+                - secretRef:
+                    name: django-secret
