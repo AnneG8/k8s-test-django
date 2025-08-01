@@ -14,7 +14,7 @@ spec:
       containers:
         - name: django-createsuperuser
           image: anneg8/django_app:latest
-          command: ["python", "manage.py", "createsuperuser"]
+          command: ["python", "manage.py", "createsuperuser", "--noinput"]
           envFrom:
             - secretRef:
                 name: django-secret
