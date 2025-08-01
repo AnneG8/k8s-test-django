@@ -1,0 +1,37 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: django-createsuperuser-job
+  namespace:
+  labels:
+    env: dev
+    app: service
+spec:
+  ttlSecondsAfterFinished: 300
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: django-createsuperuser
+          image: anneg8/django_app:latest
+          command: ["python", "manage.py", "createsuperuser"]
+          envFrom:
+            - secretRef:
+                name: django-secret
+            - secretRef:
+                name: django-superuser-secret
+          env:
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: postgres
+                  key: dsn
+          volumeMounts:
+            - name: pg-cert-volume
+              mountPath: /root/.postgresql/root.crt
+              subPath: root.crt
+              readOnly: true
+      volumes:
+        - name: pg-cert-volume
+          secret:
+            secretName: pg-root-cert

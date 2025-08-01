@@ -105,9 +105,56 @@ helm install postgres-db bitnami/postgresql \
 
 ```sh
 kubectl apply -f django-secret.yaml
+kubectl apply -f django-migrate.yaml
 kubectl apply -f deployment-django-app.yaml
 kubectl apply -f service-django-app.yaml
-kubectl apply -f django-migrate.yaml
 kubectl apply -f ingress.yaml
 kubectl apply -f django-clearsessions.yaml
+```
+
+## Как задеплоить код
+
+Пример сайта [по ссылке](https://edu-anna-veselova.sirius-k8s.dvmn.org/).
+Данные для доступа к инфраструктуре сайта [по ссылке](https://sirius-env-registry.website.yandexcloud.net/edu-anna-veselova.html).
+
+Подключитесь к кластеру Kubernetes. Пример подключения для [Yandex Cloud](https://yandex.cloud/ru/docs/managed-kubernetes/operations/connect/#kubectl-connect).
+
+Во всех манифестах директории деплоя `yc-sirius-k8s` укажите нужный `namespace`. В манифесте `service-django-app.yaml` укажите `nodePort`, на который настроен ALB-роутинг. 
+Создайте файлы `django-secret.yaml` и `django-config.yaml` по образцу `django-secret-template.yaml` и `django-config-template.yaml` соответственно, заполните в них значения переменных `SECRET_KEY`, `DEBUG` и `ALLOWED_HOSTS`.
+Для подключения к PostgreSQL необходимо проверить наличие или создать `Secret` с SSL-сертификатом root.crt. Укажите имя этого `Secret` во всех манифестах из директории `yc-sirius-k8s`, где используется том `pg-cert-volume` в поле `secretName` (по умолчанию назван `pg-root-cert`).
+
+Выполните команды:
+
+```sh
+kubectl apply -f django-secret.yaml
+kubectl apply -f django-config.yaml
+kubectl apply -f django-migrate.yaml
+kubectl apply -f deployment-django-app.yaml
+kubectl apply -f service-django-app.yaml
+kubectl apply -f django-clearsessions.yaml
+```
+
+### Как создать суперпользователя Django
+Если требуется создать суперпользователя Django, создайте файл `django-superuser-secret.yaml` по образцу `django-superuser-secret-template.yaml` и заполните в нём значения переменных `SUPERUSER_USERNAME`, `SUPERUSER_EMAIL` и `SUPERUSER_PASSWORD`. Также укажите `namespace` и `secretName` тома `pg-cert-volume` в `django-createsuperuser.yaml`.
+
+Выполните команды:
+
+```sh
+kubectl apply -f django-superuser-secret.yaml
+kubectl apply -f django-createsuperuser.yaml
+kubectl wait --for=condition=complete job/django-createsuperuser-job --timeout=300s
+kubectl delete secret django-superuser-secret
+```
+
+### Как сменить версию приложения
+По умолчанию устанавливается последняя версия образа `anneg8/django_app`. Если нужно установить другую версию приложения, укажите в манифесте `deployment-django-app.yaml` соответстующий тег [образа](https://hub.docker.com/repository/docker/anneg8/django_app/general) и выполните команду
+
+```sh
+kubectl apply -f deployment-django-app.yaml
+```
+
+Для проверки успешности обновления можно запустить команду
+
+```sh
+kubectl rollout status deployment deployment-django-app
 ```

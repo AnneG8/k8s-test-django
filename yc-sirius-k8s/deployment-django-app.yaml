@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: django-app-deployment
+  namespace:
   labels:
     env: dev
     app: django
@@ -25,9 +26,24 @@ spec:
           envFrom:
             - secretRef:
                 name: django-secret
+            - configMapRef:
+                name: django-config
+          env:
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: postgres
+                  key: dsn
           volumeMounts:
             - name: media-volume
               mountPath: /media
+            - name: pg-cert-volume
+              mountPath: /root/.postgresql/root.crt
+              subPath: root.crt
+              readOnly: true
       volumes:
         - name: media-volume
           emptyDir: {}
+        - name: pg-cert-volume
+          secret:
+            secretName: pg-root-cert
